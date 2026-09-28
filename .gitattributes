@@ -1,0 +1,5 @@
+# Shell launchers must keep LF endings — they are run on Linux training hosts.
+*.sh text eol=lf
+*.py text
+*.md text
+*.csv text

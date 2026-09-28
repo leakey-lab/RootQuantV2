@@ -1,0 +1,121 @@
+{
+  "_comment": [
+    "Manifest of released RootQuant-V2 checkpoints.",
+    "",
+    "TO PUBLISH: upload the files from the release staging folder to one Google",
+    "Drive folder, set the folder to 'Anyone with the link -> Viewer', then fill",
+    "in 'drive_folder_url' below and each entry's 'drive_file_id' (the FILE_ID in",
+    "https://drive.google.com/file/d/FILE_ID/view). Leaving 'drive_file_id' null",
+    "is fine — tools/download_checkpoints.py can still take a share link on the",
+    "command line with --url.",
+    "",
+    "sha256 / bytes are the real values of the released files; the downloader",
+    "verifies them after every download.",
+    "",
+    "'name' is the release name (Drive file = <name>.pt, local install =",
+    "<install_root>/<name>/best.pt). 'trained_as' is the run_name the trainer",
+    "wrote the checkpoint under (config.py profiles + ablations, run_*.sh)."
+  ],
+
+  "drive_folder_url": "https://drive.google.com/drive/folders/1dPkiepx5tDsctXCahvv0E8LYo2zkyaVQ?usp=sharing",
+  "install_root": "RootQuantV2/runs/checkpoints",
+
+  "checkpoints": [
+    {
+      "name": "rootquant-v2-weights",
+      "trained_as": "v2_dinov3_mona768_v3",
+      "file": "rootquant-v2-weights.pt",
+      "drive_file_id": "1Mam81wHZUfyq40PhaGm2B8xmf3EazcRL",
+      "bytes": 95561807,
+      "sha256": "f55ca3fb7d85fef0b894d919e561c64105ce5528530ea2a76e46204c5e3a55f2",
+      "profile": "dinov3_dora_mona_768_v3",
+      "trainable_params": "11.90M (3.78%)",
+      "tags": ["headline", "default"],
+      "description": "HEADLINE model. 896 px, DoRA(r=32) on attention + Mona on the MLP branch, backbone fully frozen, readout=both, EMA, D4 TTA. Trained on the mixed soybean+maize split. Use this one unless you have a reason not to."
+    },
+    {
+      "name": "rootquant-v2-768px",
+      "trained_as": "v2_dinov3_mona768_v2",
+      "file": "rootquant-v2-768px.pt",
+      "drive_file_id": "1rMUbDPnZyAwc9T7NeEpJk-U2LEvU5Fdu",
+      "bytes": 61988255,
+      "sha256": "6f1e78a0add4e0ab34d1f813df356fb5de77bcb95b00b28fc4c8f5127bae8d6d",
+      "profile": "dinov3_dora_mona_768_v2",
+      "tags": ["variant"],
+      "description": "768 px, DoRA(r=16) + Mona, huber(3), softplus-GeM, EMA, TTA, readout=both. The configuration between the 640 px DoRA-only baseline and the headline model. Trained without tile-shuffle."
+    },
+    {
+      "name": "rootquant-v2-dora-only",
+      "trained_as": "v2_dinov3_mona768_v3_no-mona",
+      "file": "rootquant-v2-dora-only.pt",
+      "drive_file_id": "1ysSemsNqGAnV0zC9TvX7e8aNK9qKYYJq",
+      "bytes": 68121071,
+      "sha256": "11b53c8d6161d90b7996fac8506cb1d0beff98875c7cda236a4a35ee2902bd25",
+      "profile": "dinov3_dora_mona_768_v3",
+      "ablation": "no-mona",
+      "trainable_params": "8.50M",
+      "tags": ["ablation"],
+      "description": "Headline recipe with the Mona adapter removed; DoRA untouched. The matched control for isolating the convolutional adapter."
+    },
+    {
+      "name": "rootquant-v2-unfreeze-last2",
+      "trained_as": "v2_dinov3_mona768_v3_unfreeze-last2",
+      "file": "rootquant-v2-unfreeze-last2.pt",
+      "drive_file_id": "1S2-W256CVmsH0fZD54OcwEqgPCEC7Mlc",
+      "bytes": 229976255,
+      "sha256": "e8ee6c664080c948eee4fdbf5df6db44cfaf2cb534206acc73b10edd9088717c",
+      "profile": "dinov3_dora_mona_768_v3",
+      "ablation": "unfreeze-last2",
+      "trainable_params": "28.70M",
+      "tags": ["ablation"],
+      "description": "Headline architecture plus the MLP, LayerNorm and LayerScale weights of the last two ViT blocks unfrozen at a low LR. Attention stays frozen behind the DoRA buffer. Trained without tile-shuffle."
+    },
+    {
+      "name": "rootquant-v2-soybean-only",
+      "trained_as": "xspecies_soy_v3",
+      "file": "rootquant-v2-soybean-only.pt",
+      "drive_file_id": "1KyGAS2MCIdrJ2VL9s1-UWAcJHzmYYTKk",
+      "bytes": 95562575,
+      "sha256": "6ec3bc5df1e8fa2631c86916b45d255d8a438d01f1b79f98bda446e7506a1fb0",
+      "profile": "dinov3_dora_mona_768_v3",
+      "tags": ["cross-species"],
+      "description": "Headline architecture trained on the soybean-only split (phase 1 of run_cross_species.sh), without tile-shuffle."
+    },
+    {
+      "name": "rootquant-v2-soybean-to-maize-fcft",
+      "trained_as": "xspecies_fcft_v3",
+      "file": "rootquant-v2-soybean-to-maize-fcft.pt",
+      "drive_file_id": "1jUQOjucCwBRob5YsHDI9LkZZaf9HqT9P",
+      "bytes": 95544323,
+      "sha256": "71749f7fa91a26668293ba4763ab595135c8f57407e286c441836d1380e00355",
+      "profile": "dinov3_dora_mona_768_v3",
+      "finetune_mode": "fc_only",
+      "tags": ["cross-species"],
+      "description": "Warm-started from rootquant-v2-soybean-only and fine-tuned on maize with the feature extractor frozen — only the regression readout trains (FCFT). The file holds the complete adapter set: the frozen soybean-only DoRA / Mona / pooler weights plus the maize-trained readout. Trained without tile-shuffle."
+    },
+    {
+      "name": "rootquant-v2-soybean-to-maize-fft",
+      "trained_as": "xspecies_fft_v3",
+      "file": "rootquant-v2-soybean-to-maize-fft.pt",
+      "drive_file_id": "16h3iFqcnJOe2GmLdXKo_3mLhTsG1pIOb",
+      "bytes": 95563855,
+      "sha256": "530cc89d0d8d0388ef4811eb485eba29be4254141b25e4f05e7b751af7e5e7cd",
+      "profile": "dinov3_dora_mona_768_v3",
+      "finetune_mode": "full",
+      "tags": ["cross-species"],
+      "description": "Warm-started from rootquant-v2-soybean-only and fully fine-tuned on maize (FFT) — the whole warm-started adapter set trains. Trained without tile-shuffle."
+    },
+    {
+      "name": "rootquant-v2-dora-baseline-640px",
+      "trained_as": "v2_dinov3_dora_reg",
+      "file": "optional_large/rootquant-v2-dora-baseline-640px.pt",
+      "drive_file_id": null,
+      "bytes": 1310225703,
+      "sha256": "c1e3d0d43b21bcc23f560116828fa070cd294169770437bc84da682987f58b16",
+      "profile": "dinov3_dora",
+      "optional": true,
+      "tags": ["baseline", "large"],
+      "description": "640 px, DoRA on attention and MLP, no Mona, cls_mean_max pool, global readout. 1.2 GB because this early checkpoint format stores the frozen backbone inline instead of rebuilding it at load time."
+    }
+  ]
+}

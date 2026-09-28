@@ -1,0 +1,216 @@
+% diagram_6 — RootQuantV2 architecture figure, iteration 7 (frozen-backbone headline)
+% Model: dinov3_dora_mona_768_v3 (paper headline), backbone FULLY FROZEN, 11.9M/3.78%.
+%
+% The paper headlines the fully-frozen v3 model: DoRA adapts attention and Mona
+% adapts the MLP branch in place; NO transformer block is unfrozen. The earlier
+% unfreeze-last2 depiction (orange MLP on blocks 23-24, 28.7M/9.11%) is removed —
+% the two-block unfreeze is now reported only as an ablation that adds 16.8M
+% parameters without improving accuracy. All other geometry follows the
+% diagram_4/arch lineage.
+\documentclass[tikz,border=6pt]{standalone}
+\usetikzlibrary{positioning,arrows.meta,fit,backgrounds,calc}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+
+% ── palette (Okabe-Ito derived pastels) ──────────────────────────────
+\definecolor{frzEdge}{RGB}{70,130,200}    % cool = frozen
+\definecolor{frzFill}{RGB}{234,242,251}
+\definecolor{trnEdge}{RGB}{213,94,0}      % warm = trainable
+\definecolor{trnFill}{RGB}{253,236,219}
+\definecolor{datEdge}{RGB}{120,120,120}
+\definecolor{datFill}{RGB}{246,246,246}
+\definecolor{whyGray}{RGB}{105,105,105}
+\definecolor{iceCol}{RGB}{60,135,215}
+
+% ── icons drawn as TikZ paths (fontawesome OTF segfaults tectonic) ───
+\newcommand{\snowico}{\begin{tikzpicture}[baseline=-0.55ex, line cap=round]
+\foreach \a in {0,60,...,300}{
+  \draw[iceCol, line width=.5pt] (0,0) -- (\a:0.115);
+  \draw[iceCol, line width=.4pt] (\a:0.07) -- ++(\a+60:0.04);
+  \draw[iceCol, line width=.4pt] (\a:0.07) -- ++(\a-60:0.04);}
+\end{tikzpicture}}
+\newcommand{\fireico}{\begin{tikzpicture}[baseline=-0.4ex]
+\path[fill=trnEdge] (0,-0.10) .. controls (-0.105,-0.04) and (-0.075,0.06) ..
+  (-0.01,0.135) .. controls (-0.005,0.07) and (0.04,0.075) .. (0.065,0.02)
+  .. controls (0.09,-0.03) and (0.07,-0.085) .. (0,-0.10) -- cycle;
+\path[fill=yellow!80!orange] (0.0,-0.085) .. controls (-0.05,-0.03) and
+  (-0.03,0.02) .. (0.005,0.06) .. controls (0.03,0.015) and (0.045,-0.04)
+  .. (0.0,-0.085) -- cycle;
+\end{tikzpicture}}
+
+\begin{document}
+\begin{tikzpicture}[
+  font=\footnotesize,
+  flow/.style={-{Stealth[length=1.7mm]}, line width=0.55pt, draw=black!75, rounded corners=2pt},
+  frz/.style={draw=frzEdge, fill=frzFill, rounded corners=2.5pt, align=center, inner sep=3pt, line width=0.6pt},
+  trn/.style={draw=trnEdge, fill=trnFill, rounded corners=2.5pt, align=center, inner sep=3pt, line width=0.6pt},
+  dat/.style={draw=datEdge, fill=datFill, rounded corners=2.5pt, align=center, inner sep=3pt, line width=0.6pt},
+  op/.style={draw=black!70, circle, inner sep=0.9pt, fill=white, font=\footnotesize, line width=0.55pt},
+  why/.style={font=\scriptsize\itshape, text=whyGray, align=center},
+  lab/.style={font=\scriptsize, align=center},
+  panel/.style={draw=gray!60, dashed, rounded corners=5pt, inner sep=7pt, fill=yellow!6!white},
+  ptag/.style={font=\footnotesize\bfseries, text=black!80},
+  ]
+
+% ════════════════ PANEL A — pipeline overview ════════════════
+\node[ptag] at (0.1,0.35) {(a)};
+\node[lab, anchor=east] at (17.9,0.35)
+  {\snowico\ frozen \qquad \fireico\ trainable};
+
+% input image with letterbox bars
+\node[fill=black!22, minimum width=2.0cm, minimum height=2.0cm, inner sep=0pt] (imgframe) at (1.1,-2.1) {};
+\node[inner sep=0pt] (img) at (1.1,-2.1)
+  {\includegraphics[width=2.0cm, trim=0 12 0 0, clip]{sample_root.jpg}};
+\node[lab, below=1pt of imgframe] {letterboxed $3\times896^2$};
+
+% patch embed
+\node[frz, minimum height=1.0cm] (pe) at (3.1,-2.1) {Patch\\embed \snowico};
+\draw[flow] (imgframe) -- (pe);
+
+% tokens label under the pe->enc arrow
+\node[lab, anchor=north] at (4.15,-2.72) {$(1{+}4{+}56^2)$\\ tokens $\times\,1024$};
+
+% encoder container with 24-block strip
+\node[frz, minimum width=4.0cm, minimum height=2.2cm, anchor=west, fill=frzFill!60] (enc) at (4.75,-2.1) {};
+\node[anchor=north] at ($(enc.north)+(0,-0.06)$) {DINOv3 ViT-L/16 \snowico};
+\foreach \i/\x in {1/5.2,2/5.7,3/6.2,22/7.1}{
+  \node[frz, minimum width=0.3cm, minimum height=1.05cm, inner sep=1pt] (s\i) at (\x,-2.35) {};}
+\node at (6.65,-2.35) {$\cdots$};
+\foreach \i/\x in {23/7.7,24/8.2}{
+  \node[frz, minimum width=0.3cm, minimum height=1.05cm, inner sep=1pt] (s\i) at (\x,-2.35) {};}
+\node[lab] at (5.2,-3.06) {\scriptsize 1};
+\node[lab] at (7.95,-3.06) {\scriptsize 23\;24};
+% Backbone is fully frozen: DoRA adapts attention and Mona adapts the MLP branch
+% in place; no transformer block is unfrozen.
+\node[why, anchor=north] at ($(enc.south)+(0,-0.04)$)
+  {block detail in (b);\\ all 24 blocks frozen \snowico\\ DoRA\,{+}\,Mona adapt in place};
+\draw[flow] (pe) -- (enc);
+
+% split into CLS / patches
+\coordinate (split) at (8.8,-2.1);
+\draw[line width=0.55pt, draw=black!75] (enc.east) -- (split);
+\node[circle, fill=black!75, inner sep=1.1pt] at (split) {};
+\node[dat] (cls) at (9.5,-1.15) {CLS};
+\node[dat] (pat) at (9.5,-3.0) {patch\\tokens};
+\node[why, align=center] at (9.5,-2.02) {registers\\dropped};
+\draw[flow] (split) |- (cls);
+\draw[flow] (split) |- (pat);
+
+% global branch: pools -> concat -> MLP head
+\node[trn] (apool) at (11.3,-1.6) {attn pool \fireico};
+\node[trn] (gem) at (11.3,-2.35) {GeM \fireico};
+\coordinate (ptrunk) at (10.3,-3.0);
+\draw[line width=0.55pt, draw=black!75] (pat.east) -- (ptrunk);
+\draw[flow] (ptrunk) |- (apool.west);
+\draw[flow] (ptrunk) |- (gem.west);
+\node[op] (cat) at (12.45,-1.6) {c};
+\draw[flow] (cls.east) -| (cat.north);
+\draw[flow] (apool.east) -- (cat);
+\draw[flow] (gem.east) -| (cat.south);
+\node[trn] (head) at (14.2,-1.6) {MLP \fireico\\ $3072{\to}1024{\to}256{\to}2$};
+\draw[flow] (cat) -- (head);
+\node[lab, below=2pt of cat] {3072};
+
+% density branch
+\node[trn] (dmlp) at (11.75,-3.75) {per-patch MLP \fireico\\ softplus $\geq 0$};
+\draw[flow] (pat.south) |- (dmlp.west);
+\node[op] (sum) at (13.35,-3.75) {$\Sigma$};
+\node[lab, below=1pt of sum] {\scriptsize masked, $\times g$};
+\node[dat] (zmap) at (14.55,-3.75) {fixed\\ $z$-map};
+\draw[flow] (dmlp) -- (sum);
+\draw[flow] (sum) -- (zmap);
+\node[why, anchor=west] at (10.35,-4.55)
+  {extensive targets: totals grow with root amount $\Rightarrow$ sum readout};
+
+% blend + output
+\node[op] (blend) at (15.75,-2.55) {$\sigma$};
+\node[lab, anchor=east] at (15.55,-2.55) {\scriptsize per-target\\ \scriptsize blend};
+\draw[flow] (head.east) -| (blend.north);
+\draw[flow] (zmap.east) -| (blend.south);
+\node[dat, line width=0.8pt, anchor=west] (out) at (16.15,-2.55)
+  {root length (mm)\\ surface area (mm$^2$)};
+\draw[flow] (blend) -- (out);
+\node[why, anchor=north] at (17.05,-3.12) {$z^{-1}$, clamp $\geq 0$};
+
+% ════════════════ PANEL B — adapted block (×24) ════════════════
+\node[panel, minimum width=4.8cm, minimum height=6.0cm, anchor=north west] (pb) at (0.2,-5.1) {};
+\node[ptag, anchor=north west] at ($(pb.north west)+(0.06,-0.05)$) {(b) adapted ViT block ($\times$24)};
+
+\coordinate (bin) at (2.0,-5.75);
+\node[frz, minimum width=1.0cm] (ln1) at (2.0,-6.35) {LN};
+\node[frz, minimum width=1.5cm] (attn) at (2.0,-7.25) {Attention};
+\node[trn, font=\scriptsize] (dtag) at (3.7,-7.25) {DoRA \fireico\\ qkv, proj (c)};
+\draw[line width=0.5pt, draw=trnEdge] (attn.east) -- (dtag.west);
+\node[op] (add1) at (2.0,-8.15) {$+$};
+\node[frz, minimum width=1.0cm] (ln2) at (2.0,-8.95) {LN};
+\node[frz, minimum width=1.0cm] (mlp) at (2.0,-9.75) {MLP};
+\node[trn, font=\scriptsize] (mona) at (3.55,-9.75) {Mona \fireico\ (d)};
+\node[op] (add2) at (2.0,-10.55) {$+$};
+\coordinate (bout) at (2.0,-11.0);
+
+\draw[flow] (bin) -- (ln1);
+\draw[flow] (ln1) -- (attn);
+\draw[flow] (attn) -- (add1);
+\draw[flow] (bin) -- ++(-1.05,0) |- (add1.west);
+\draw[flow] (add1) -- (ln2);
+\draw[flow] (ln2) -- (mlp);
+\draw[flow] (mlp) -- (add2);
+\coordinate (tap2) at (2.0,-8.5);
+\draw[flow] (tap2) -- ++(-1.05,0) |- (add2.west);
+\coordinate (mtap) at (2.0,-9.3);
+\draw[flow] (mtap) -| (mona.north);
+\draw[flow] (mona.south) |- (add2.east);
+\draw[flow] (add2) -- (bout);
+
+% ════════════════ PANEL C — DoRA detail ════════════════
+\node[panel, minimum width=5.85cm, minimum height=6.0cm, anchor=north west] (pc) at (5.25,-5.1) {};
+\node[ptag, anchor=north west] at ($(pc.north west)+(0.06,-0.05)$) {(c) DoRA, rank 32};
+
+\node[dat, minimum width=0.6cm, minimum height=1.5cm] (w0) at (6.2,-7.2) {$W_0$};
+\node[trn, minimum width=0.9cm] (mvec) at (7.95,-6.55) {$m$ \fireico};
+\node[frz, minimum width=0.6cm, minimum height=1.1cm] (vdir) at (7.95,-7.7) {$V$};
+\draw[flow] (w0.east) |- (mvec.west) node[lab, pos=0.85, above] {\scriptsize magnitude};
+\draw[flow] (w0.east) |- (vdir.west) node[lab, pos=0.85, below] {\scriptsize direction};
+\node[trn] (ba) at (9.85,-7.7) {$+\,BA$ \fireico};
+\draw[flow, draw=trnEdge] (ba.west) -- (vdir.east);
+\node[lab, text=trnEdge, anchor=south] at (9.1,-7.6) {\scriptsize low-rank};
+
+\node[lab, anchor=north] at (8.2,-8.7)
+  {$W_{\mathrm{eff}} \;=\; m\cdot\dfrac{V+BA}{\lVert V+BA\rVert_{\mathrm{col}}}$};
+\node[lab, anchor=north] at (8.2,-9.7)
+  {\scriptsize $B{=}0$ at init $\Rightarrow$ training starts exactly from $W_0$};
+\node[why, anchor=north] at (8.2,-10.25)
+  {re-aims frozen attention toward root structures};
+
+% ════════════════ PANEL D — Mona detail ════════════════
+\node[panel, minimum width=6.55cm, minimum height=6.0cm, anchor=north west] (pd) at (11.35,-5.1) {};
+\node[ptag, anchor=north west] at ($(pd.north west)+(0.06,-0.05)$) {(d) Mona adapter};
+
+\node[trn, font=\scriptsize] (mdown) at (12.4,-6.9) {Linear\\ $1024{\to}64$};
+\node[trn, font=\scriptsize] (dw3) at (14.0,-5.9) {DW $3{\times}3$};
+\node[trn, font=\scriptsize] (dw5) at (14.0,-6.9) {DW $5{\times}5$};
+\node[trn, font=\scriptsize] (dw7) at (14.0,-7.9) {DW $7{\times}7$};
+\node[op, font=\scriptsize] (mavg) at (15.05,-6.9) {avg};
+\node[trn, font=\scriptsize] (mpw) at (15.8,-6.9) {$1{\times}1$};
+\node[lab, anchor=north] at (15.8,-7.4) {\scriptsize GELU};
+\node[trn, font=\scriptsize] (mup) at (16.95,-6.9) {Linear\\ $64{\to}1024$};
+\node[lab, anchor=north] at (16.95,-7.4) {\scriptsize 0-init, $\times s$};
+\draw[flow] (11.65,-6.9) -- (mdown.west);
+\draw[flow] (mdown.east) |- (dw3.west);
+\draw[flow] (mdown.east) -- (dw5.west);
+\draw[flow] (mdown.east) |- (dw7.west);
+\draw[flow] (dw3.east) -| (mavg.north);
+\draw[flow] (dw5.east) -- (mavg);
+\draw[flow] (dw7.east) -| (mavg.south);
+\draw[flow] (mavg) -- (mpw);
+\draw[flow] (mpw) -- (mup);
+\node[lab, anchor=north] at (14.65,-9.0) {\scriptsize reshaped to the patch grid; CLS \& registers bypass};
+\node[why, anchor=north] at (14.65,-9.7)
+  {multi-scale convolution restores the locality a ViT\\ lacks --- thin roots are local texture};
+
+% ── bottom trainable-budget summary (fully-frozen backbone) ──
+\node[font=\footnotesize, text=black!85, align=center] at (9.0,-11.75)
+  {\textbf{Trainable:} 11.9\,M / 315\,M (3.78\%)\,---\,DoRA 4.8\,M $\cdot$ Mona 3.4\,M $\cdot$ head 3.4\,M $\cdot$ readout 0.3\,M};
+
+\end{tikzpicture}
+\end{document}

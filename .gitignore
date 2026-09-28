@@ -1,0 +1,44 @@
+# ── Python ──────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+.ipynb_checkpoints/
+
+# ── Model weights ───────────────────────────────────────────────────────
+# The DINOv3 backbone (~1.2 GB) and the trained RootQuant-V2 checkpoints are
+# distributed separately — see "Model weights" in the README. Never commit them.
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+RootQuantV2/dinov3/*
+!RootQuantV2/dinov3/README.md
+
+# ── Training / evaluation outputs ───────────────────────────────────────
+# Everything under runs/ is generated locally: downloaded checkpoints, training
+# logs, prediction CSVs. None of it is distributed with the repository.
+RootQuantV2/runs/
+RootQuantV2/logs/
+RootQuantV2/viz_attention/
+RootQuantV2/viz_analysis/
+RootQuantV2/viz_false_positives/
+RootQuantV2/viz_true_empty/
+RootQuantV2/viz_mona_pair/
+RootQuantV2/scratchpad/
+
+# ── Editors / OS ────────────────────────────────────────────────────────
+.vscode/
+.idea/
+.claude/
+.DS_Store
+Thumbs.db
+*.swp
+
+# NFS silly-rename turds
+.nfs*

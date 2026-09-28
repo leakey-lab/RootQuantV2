@@ -1,0 +1,58 @@
+cff-version: 1.2.0
+message: "If you use RootQuant-V2, please cite the accompanying paper (arXiv:2609.25567)."
+title: "RootQuant-V2: Foundation-Model Root-Trait Regression from Minirhizotron Imagery"
+abstract: >-
+  RootQuant-V2 regresses living root length (mm) and surface area (mm2) directly
+  from single RGB minirhizotron frames, with no segmentation labels. A frozen
+  DINOv3 ViT-L/16 backbone is adapted with DoRA on the attention projections and
+  a Mona multi-scale convolutional adapter on the MLP branch, read out by a
+  learnable pool fused with a density-style extensive head. 11.9M trainable
+  parameters (3.78% of the model). This repository distributes the source code
+  and the trained weights; the dataset is not included.
+type: software
+license: MIT
+version: "0.2.0"
+date-released: "2026-08-10"
+repository-code: "https://github.com/leakey-lab/RootQuantV2"
+url: "https://arxiv.org/abs/2609.25567"
+
+authors:
+  - given-names: Kinjalk
+    family-names: Parth
+  - given-names: Sebastian
+    family-names: Varela
+  - given-names: Andrew D. B.
+    family-names: Leakey
+
+identifiers:
+  - type: doi
+    value: 10.48550/arXiv.2609.25567
+    description: "arXiv DOI of the accompanying paper"
+  - type: url
+    value: "https://arxiv.org/abs/2609.25567"
+    description: "arXiv abstract page"
+
+keywords:
+  - root phenotyping
+  - minirhizotron
+  - vision foundation models
+  - parameter-efficient fine-tuning
+  - DINOv3
+  - regression
+
+preferred-citation:
+  type: article
+  title: "RootQuantV2: Adapting a Vision Foundation Model for Root-Trait Regression from Minirhizotron Imagery"
+  authors:
+    - given-names: Kinjalk
+      family-names: Parth
+    - given-names: Sebastian
+      family-names: Varela
+    - given-names: Andrew D. B.
+      family-names: Leakey
+  year: 2026
+  month: 9
+  journal: "arXiv preprint"
+  doi: 10.48550/arXiv.2609.25567
+  url: "https://arxiv.org/abs/2609.25567"
+  notes: "arXiv:2609.25567 [cs.CV]. Accepted to the Computer Vision in Plant Phenotyping and Agriculture (CVPPA) Workshop at ECCV 2026."

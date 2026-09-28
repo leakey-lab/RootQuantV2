@@ -1,0 +1,36 @@
+# RootQuant-V2 runtime dependencies.
+#
+# Install PyTorch FIRST, matched to your CUDA version, from pytorch.org — the
+# generic PyPI wheel may not carry the right CUDA runtime for your driver.
+# Reference environment (the one that produced the released checkpoints):
+#   Python 3.10.10 · torch 2.11.0+cu126 · torchvision 0.26.0+cu126 · CUDA 12.6
+#   4x NVIDIA A100-SXM4-80GB
+#
+#   pip install torch==2.11.0 torchvision==0.26.0 --index-url https://download.pytorch.org/whl/cu126
+#   pip install -r requirements.txt
+
+torch>=2.4
+torchvision>=0.19
+
+numpy>=1.24
+pandas>=2.0
+pillow>=10.0
+tqdm>=4.65
+
+# Imported by the facebookresearch/dinov3 torch.hub code that builds the
+# backbone architecture (backbone/dinov3.py loads it via torch.hub.load).
+torchmetrics>=1.0
+termcolor>=2.0
+
+# Plots, montages and saliency figures (visualize_attention.py, montage_*.py,
+# viz_*.py, plot_regression.py).
+matplotlib>=3.7
+
+# TensorBoard event logging during training (training/trainer.py degrades
+# gracefully to no logging if this is absent).
+tensorboard>=2.14
+
+# Optional for training and prediction. scikit-learn: ROC-AUC presence
+# diagnostic in the trainer (skipped if absent) and the PCA token map in
+# visualize_attention.py (required there).
+scikit-learn>=1.3
