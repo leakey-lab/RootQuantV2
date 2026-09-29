@@ -497,13 +497,23 @@ traits directly against archived scalar totals.
 
 ## License and acknowledgements
 
-Source code: **MIT** — see [LICENSE](LICENSE).
+RootQuant-V2 is **dual-licensed**. Both licenses cover this repository's source
+code and the trained RootQuant-V2 checkpoints.
 
-The MIT license covers this repository's code only. The **DINOv3 backbone
-weights are Meta's** and are governed by the DINOv3 License, which you accept
-when downloading them from
+- **Open source: AGPL-3.0-only.** See [LICENSE](LICENSE). If you distribute
+  RootQuant-V2 or a work based on it, or run a modified version as a network
+  service, you must release that work's complete source code under the AGPL-3.0.
+- **Commercial license.** Use this license for proprietary products or services
+  that cannot meet the AGPL terms. See
+  [LICENSE-COMMERCIAL.md](LICENSE-COMMERCIAL.md) or contact
+  <kinjalk2@illinois.edu>.
+
+Neither license covers the **DINOv3 backbone weights**. They are Meta's and are
+governed by the DINOv3 License, which you accept when downloading them from
 <https://github.com/facebookresearch/dinov3>. Nothing here grants any right to
-those weights, and they are not redistributed.
+those weights. The slim checkpoints do not contain them; the optional 640 px
+baseline stores the frozen backbone inline, and those parameters remain under
+the DINOv3 License. See [NOTICE](NOTICE).
 
 This work builds directly on
 [DINOv3](https://github.com/facebookresearch/dinov3) (Siméoni et al., 2025),

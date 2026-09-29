@@ -1,0 +1,32 @@
+RootQuant-V2
+Copyright (C) 2026 The RootQuant-V2 authors
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License as published by the Free
+Software Foundation, version 3 only (SPDX: AGPL-3.0-only).
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License in the
+LICENSE file for more details.
+
+Alternatively, RootQuant-V2 is available under a separate commercial license
+for uses that cannot meet the terms of the AGPL-3.0. See LICENSE-COMMERCIAL.md.
+
+Both licenses cover the RootQuant-V2 source code in this repository and the
+trained RootQuant-V2 checkpoints listed in checkpoints.json. Earlier releases
+of RootQuant-V2 (up to and including commit e5bccd5) were published under the
+MIT License; copies obtained from those releases remain under that license.
+
+--------------------------------------------------------------------------------
+THIRD-PARTY COMPONENTS
+
+Neither license covers the pretrained DINOv3 backbone.
+
+DINOv3 (Meta Platforms, Inc.) — the ViT-L/16 backbone weights this project
+adapts must be obtained from Meta and are governed by the DINOv3 License, which
+you accept when downloading them:
+    https://github.com/facebookresearch/dinov3
+Nothing in this repository grants any right to those weights. The optional
+rootquant-v2-dora-baseline-640px checkpoint stores the frozen backbone inline;
+those backbone parameters remain under the DINOv3 License.

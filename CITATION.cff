@@ -10,7 +10,7 @@ abstract: >-
   parameters (3.78% of the model). This repository distributes the source code
   and the trained weights; the dataset is not included.
 type: software
-license: MIT
+license: AGPL-3.0-only
 version: "0.2.0"
 date-released: "2026-08-10"
 repository-code: "https://github.com/leakey-lab/RootQuantV2"
