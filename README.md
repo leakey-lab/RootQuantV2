@@ -65,7 +65,7 @@ The first run also fetches Meta's DINOv3 model code from GitHub through
 ```bash
 python tools/download_checkpoints.py --list     # what's available
 python tools/download_checkpoints.py            # the headline model (91 MB)
-python tools/download_checkpoints.py --all      # every released checkpoint
+python tools/download_checkpoints.py --all      # every checkpoint except the optional 1.2 GB baseline
 ```
 
 Checkpoints land in `RootQuantV2/runs/checkpoints/<name>/best.pt` and every
@@ -99,20 +99,19 @@ Trained weights are hosted on Google Drive, not in git.
 > **Drive folder:** <https://drive.google.com/drive/folders/1dPkiepx5tDsctXCahvv0E8LYo2zkyaVQ?usp=sharing>
 
 Release names follow the paper: `rootquant-v2-weights` is the full (headline)
-model, and every other file is named for what differs from it.
-The Drive file is `<name>.pt`; *trained as* is the `run_name` the trainer wrote it
-under (`config.py` profile + ablation), for matching logs and scripts.
+model, and every other file is named for what differs from it. The Drive file is
+`<name>.pt`.
 
-| name | size | trained as | configuration |
-|---|---|---|---|
-| `rootquant-v2-weights` | 91 MB | `v2_dinov3_mona768_v3` | **Headline (full model).** 896 px, DoRA r=32 + Mona, frozen backbone, trained on the mixed soybean + maize split. Start here. |
-| `rootquant-v2-768px` | 59 MB | `v2_dinov3_mona768_v2` | 768 px, DoRA r=16 + Mona. † |
-| `rootquant-v2-dora-only` | 65 MB | `v2_dinov3_mona768_v3_no-mona` | Headline recipe with the Mona adapter removed (DoRA untouched). |
-| `rootquant-v2-unfreeze-last2` | 219 MB | `v2_dinov3_mona768_v3_unfreeze-last2` | Last two ViT blocks unfrozen at a low LR (MLP, LayerNorm and LayerScale `ls1`/`ls2` weights; attention stays frozen behind the DoRA buffer). † |
-| `rootquant-v2-soybean-only` | 91 MB | `xspecies_soy_v3` | Trained on soybean only. † |
-| `rootquant-v2-soybean-to-maize-fcft` | 91 MB | `xspecies_fcft_v3` | Warm-started from the soybean-only model, readout-only fine-tune on maize (FCFT). The file also holds the frozen soybean-only adapters it runs on. † |
-| `rootquant-v2-soybean-to-maize-fft` | 91 MB | `xspecies_fft_v3` | Warm-started from the soybean-only model, full fine-tune on maize (FFT). † |
-| `rootquant-v2-dora-baseline-640px` | 1.2 GB | `v2_dinov3_dora_reg` | 640 px DoRA baseline, no Mona. Optional — an early checkpoint format that stores the frozen backbone inline. |
+| name | size | configuration |
+|---|---|---|
+| `rootquant-v2-weights` | 91 MB | **Headline (full model).** 896 px, DoRA r=32 + Mona, frozen backbone, trained on the mixed soybean + maize split. Start here. |
+| `rootquant-v2-768px` | 59 MB | 768 px, DoRA r=16 + Mona. † |
+| `rootquant-v2-dora-only` | 65 MB | Headline recipe with the Mona adapter removed (DoRA untouched). |
+| `rootquant-v2-unfreeze-last2` | 219 MB | Last two ViT blocks unfrozen at a low LR (MLP, LayerNorm and LayerScale `ls1`/`ls2` weights; attention stays frozen behind the DoRA buffer). † |
+| `rootquant-v2-soybean-only` | 91 MB | Trained on soybean only. † |
+| `rootquant-v2-soybean-to-maize-fcft` | 91 MB | Warm-started from the soybean-only model, readout-only fine-tune on maize (FCFT). The file also holds the frozen soybean-only adapters it runs on. † |
+| `rootquant-v2-soybean-to-maize-fft` | 91 MB | Warm-started from the soybean-only model, full fine-tune on maize (FFT). † |
+| `rootquant-v2-dora-baseline-640px` | 1.2 GB | 640 px DoRA baseline, no Mona. Optional — an early checkpoint format that stores the frozen backbone inline. Not in the Drive folder by default: `--all` skips it, and fetching it needs `--include-optional` (or `--url`) once a link is published. |
 
 † Trained without tile-shuffle augmentation. These runs predate the tile-shuffle
 setting (their configs have no tile-shuffle keys), while the current
@@ -431,7 +430,9 @@ makes `rank_empty_density.py` a re-annotation queue. Full documentation:
 
 ```
 README.md                     this file
-checkpoints.json              released-checkpoint manifest (Drive ids + SHA-256)
+LICENSE, LICENSE-COMMERCIAL.md, NOTICE   dual license and third-party notices
+CITATION.cff                  citation metadata
+checkpoints.json              released-checkpoint manifest (release names, Drive ids + SHA-256)
 requirements.txt              runtime dependencies
 tools/download_checkpoints.py checkpoint downloader + verifier
 docs/assets/                  architecture figure (SVG, PDF, TikZ source)
